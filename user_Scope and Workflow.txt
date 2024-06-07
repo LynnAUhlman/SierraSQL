@@ -1,0 +1,16 @@
+﻿SELECT 
+  iii_user_workflow.iii_user_id AS "ID", 
+  iii_user_workflow_myuser.user_name AS "Login", 
+  iii_user.scope_menu_id AS "Scope",
+  iii_user_workflow_myuser.workflow_name AS "Workflow"
+FROM 
+  sierra_view.iii_user, 
+  sierra_view.iii_user_workflow, 
+  sierra_view.iii_user_workflow_myuser,
+  sierra_view.iii_user_permission_myuser
+WHERE 
+  iii_user.id = iii_user_workflow.iii_user_id AND
+  iii_user_workflow_myuser.iii_user_id = iii_user_workflow.iii_user_id AND
+  iii_user_workflow_myuser.iii_user_id = iii_user_permission_myuser.iii_user_id AND
+ORDER BY
+  iii_user_workflow_myuser.user_name ASC;

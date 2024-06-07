@@ -1,0 +1,13 @@
+﻿SELECT
+sierra_view.iii_user.statistic_group_code_num,
+sierra_view.iii_user.location_group_port_number,
+sierra_view.iii_user_application_myuser.application_name,
+sierra_view.iii_user.name,
+sierra_view.iii_user.full_name
+FROM
+sierra_view.iii_user,
+sierra_view.iii_user_application_myuser
+WHERE
+sierra_view.iii_user.id = iii_user_application_myuser.iii_user_id 
+ORDER BY
+sierra_view.iii_user.name
