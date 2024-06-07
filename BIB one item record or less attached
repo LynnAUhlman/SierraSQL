@@ -1,0 +1,25 @@
+SELECT
+  'i2reckey(b.bib_record_id||'a' AS [Bib #],
+  b.best_title AS [Title],
+  i.barcode AS [Barcode],
+  'i'|lk.record_num||'a' AS [Item #],
+  COUNT(i.id) AS [Item Count]
+
+FROM 
+  sierra_view.bib_record_property b
+
+INNER JOIN
+  sierra_view.bib_record bib
+    ON b.bib_record_id = bib.id
+
+INNER JOIN
+  sierra_view.bib_record_item_record_link lk
+    ON bib.bib_record_id = lk.bib_record_id
+
+INNER JOIN
+  sierra_view.item_record i
+    ON i.id = lk.item_record_id 
+
+GROUP BY 1,2
+HAVING COUNT(i.id) <= 1
+ORDER BY 2 DESC
