@@ -1,4 +1,4 @@
-﻿-- replace iii_user.name with the user login name [insert username here] and remove the brackets. 
+﻿-- replace iii_user.name equals string with the user login name [insert username here] and remove the brackets. 
 
 SELECT 
   '   * ('||iii_user_permission_myuser.permission_num || ') '||iii_user_permission_myuser.permission_name
