@@ -1,0 +1,31 @@
+SELECT
+  rm.record_type_code||rm.record_num||'a' AS "bib#",
+  b.bcode2 AS "material type",
+  brl.location_code AS "bib loc"
+
+FROM
+  sierra_view.bib_record AS b
+JOIN
+  sierra_view.record_metadata AS rm
+    ON rm.id = b.record_id
+INNER JOIN
+  sierra_view.bib_record_location AS brl
+    ON b.record_id = brl.bib_record_id
+
+
+-- bib record not an eresource or a Dirigo library record
+WHERE 
+  b.bcode2 NOT IN (4,7,9) 
+AND
+  (brl.location_code NOT LIKE 'b%' 
+OR
+ brl.location_code NOT LIKE 'me%' 
+OR 
+  brl.location_code NOT LIKE  'ms%' 
+OR 
+  brl.location_code NOT LIKE  'leg%' 
+OR 
+  brl.location_code NOT LIKE  'r%')
+
+-- group counts by column 1 (Bib Number)
+GROUP BY 1
