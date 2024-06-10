@@ -17,7 +17,8 @@ INNER JOIN
 WHERE 
   b.bcode2 NOT IN (4,7,9) 
 AND
-  (brl.location_code NOT LIKE 'b%' 
+  (
+  brl.location_code NOT LIKE 'b%' 
 OR
  brl.location_code NOT LIKE 'me%' 
 OR 
@@ -25,7 +26,10 @@ OR
 OR 
   brl.location_code NOT LIKE  'leg%' 
 OR 
-  brl.location_code NOT LIKE  'r%')
+  brl.location_code NOT LIKE  'r%'
+OR
+  brl.location_code NOT LIKE '%web%'
+)
 
 -- group counts by column 1 (Bib Number)
 GROUP BY 1
