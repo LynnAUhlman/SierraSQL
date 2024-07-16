@@ -1,0 +1,28 @@
+SELECT 
+  patron_view.barcode AS "patron barcode", 
+  'p'||patron_view.record_num||'a' AS "Patron Record #",
+  patron_view.home_library_code AS "Home Library",
+  item_view.barcode AS "item barcode",
+  'i'||item_view.record_num||'a' AS "Item Record #",
+  hold.placed_gmt AS "Date placed",
+  hold.expires_gmt AS "Hold Expires",
+  hold.location_code AS "Branch Location", 
+  hold.pickup_location_code AS "P/U Location", 
+  hold.is_ir AS "IR", 
+  hold.ir_pickup_location_code AS "IR P/U Location",
+  hold.is_ir_converted_request AS "IR Converted Rqst",
+  hold.ir_print_name AS "IR Print Name",
+  hold.ir_delivery_stop_name AS "IR Delivery Stop Name",
+  hold.status AS "Hold Status",
+  item_view.item_status_code AS "Item Status"
+FROM 
+  sierra_view.hold, 
+  sierra_view.item_view, 
+  sierra_view.item_record, 
+  sierra_view.patron_record, 
+  sierra_view.patron_view
+WHERE 
+  hold.record_id = item_record.record_id AND
+  hold.patron_record_id = patron_record.record_id AND
+  item_view.id = item_record.id AND
+  patron_record.id = patron_view.id;
