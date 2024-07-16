@@ -1,4 +1,6 @@
-SELECT 
+## NEED TO TWEAK FOR BIB REC NUM INFORMATION
+
+	SELECT 
   pv.barcode AS "PBarcode", 
   COALESCE(
     CAST(
