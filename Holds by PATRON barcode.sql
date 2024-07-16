@@ -20,5 +20,5 @@ JOIN sierra_view.item_view iv ON iv.id = hld.record_id
 JOIN sierra_view.patron_view pv ON hld.patron_record_id = pv.id
 
 WHERE 
-pv.barcode = '24473000007824'
+pv.barcode = ''
 ;
