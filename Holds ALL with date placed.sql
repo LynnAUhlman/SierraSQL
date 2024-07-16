@@ -1,5 +1,6 @@
 SELECT 
   pv.barcode AS "PBarcode", 
+  pv.record_type_code||pv.record_num||
   COALESCE(
     CAST(
         NULLIF(
@@ -99,23 +100,10 @@ CASE
   END AS "Item Status",
 COALESCE(TO_CHAR(h.on_holdshelf_gmt,'YYYY-mm-dd'),'N/A') AS "On Holdshelf",
 COALESCE(TO_CHAR(h.expire_holdshelf_gmt,'YYYY-mm-dd'),'N/A') AS "P/U Expiration",
-CASE
-  WHEN hr.holdshelf_status = 'c' THEN 'cancelled'
-  WHEN hr.holdshelf_status = 'p' THEN 'picked up'
-  WHEN hr.holdshelf_status = '!' THEN 'on holdshelf'
-  WHEN hr.holdshelf_status = '-' THEN 'available'
-  WHEN hr.holdshelf_status = 'm' THEN 'missing'
-  ELSE 'N/A'
-  END AS "Holdshelf status",
   h.is_frozen AS "Frozen"
 
 FROM 
   sierra_view.hold h
-  
-JOIN
-  sierra_view.hold_removed hr
-ON
-  h.record_id = hr.record_id
 
 JOIN
   sierra_view.record_metadata rm
