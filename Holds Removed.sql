@@ -165,4 +165,4 @@ ON
   h.patron_record_id = pv.id
   
 WHERE
-  h.placed_gmt BETWEEN '05-01-2024' AND '07-15-2024'
+  hr.removed_gmt BETWEEN '[insert date]' AND '[insert date]'
