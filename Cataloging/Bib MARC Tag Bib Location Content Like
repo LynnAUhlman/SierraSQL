@@ -1,7 +1,7 @@
 /*
 Lynn Uhlman
 Maine InfoNet
-Bib where marctag like, cataloged between, and bib location like
+Bib contains specific MARC tag, bib location, and field content LIKE
 */
 
 WITH recent_bibs AS (
