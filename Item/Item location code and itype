@@ -1,0 +1,15 @@
+/*
+Lynn Uhlman
+Maine InfoNet
+Item location LIKE and itype IN
+*/
+
+
+SELECT DISTINCT
+  ir.location_code, ip.code_num, itp.name
+FROM sierra_view.item_record ir
+JOIN itype_property ip ON (ip.code_num = ir.itype_code_num)
+JOIN itype_property_myuser itp ON (itp.code = ip.code_num)
+WHERE ir.location_code LIKE 'pfl%'
+  AND ip.code_num IN (45,188, 169)
+ORDER BY ir.location_code, itp.name;
