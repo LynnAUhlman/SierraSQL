@@ -1,0 +1,67 @@
+/*
+Lynn Uhlman
+Maine InfoNet
+Bib Multiple MARC Tags Bib Location Content Like
+*/
+
+
+WITH recent_bibs AS (
+  SELECT rm.id
+  FROM sierra_view.record_metadata rm
+  WHERE rm.record_type_code = 'b'
+    AND rm.creation_date_gmt >= '2014-01-01'
+    AND rm.creation_date_gmt <  '2026-02-14'
+),
+
+series_490 AS (
+  SELECT v.record_id, v.field_content
+  FROM sierra_view.varfield v
+  JOIN recent_bibs r
+    ON r.id = v.record_id
+  WHERE v.marc_tag = '490'
+    AND v.marc_ind1 = '1'
+    AND v.field_content ~ '[0-9]{4}'
+),
+
+series_830 AS (
+  SELECT v.record_id, v.field_content
+  FROM sierra_view.varfield v
+  JOIN recent_bibs r
+    ON r.id = v.record_id
+  WHERE v.marc_tag = '830'
+    AND v.marc_ind2 = '0'
+    AND v.field_content ~ '[0-9]{4}'
+)
+
+SELECT 
+  id2reckey(s490.record_id)||'a' AS bib_record_num,
+  brl.location_code AS bib_location,
+  s490.field_content AS series_490,
+  s830.field_content AS series_830,
+  t.field_content AS title_245
+
+FROM series_490 s490
+
+JOIN series_830 s830
+  ON s830.record_id = s490.record_id
+
+JOIN sierra_view.varfield t
+  ON t.record_id = s490.record_id
+  AND t.marc_tag = '245'
+
+JOIN sierra_view.bib_record_location brl
+  ON brl.bib_record_id = s490.record_id
+
+WHERE s490.field_content ILIKE ANY (ARRAY[
+        '%January%', '%February%', '%March%', '%April%',
+        '%May%', '%June%', '%July%', '%August%',
+        '%September%', '%October%', '%November%', '%December%'
+      ])
+  AND s830.field_content ILIKE ANY (ARRAY[
+        '%January%', '%February%', '%March%', '%April%',
+        '%May%', '%June%', '%July%', '%August%',
+        '%September%', '%October%', '%November%', '%December%'
+      ])
+  AND brl.location_code LIKE 'kbk%'
+
+ORDER BY 1;
