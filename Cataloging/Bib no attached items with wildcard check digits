@@ -1,3 +1,10 @@
+/*
+Lynn Uhlman
+Maine InfoNet
+Bib no attached items with wildcard check digits
+*/
+
+
 SELECT
 	md.record_type_code||md.record_num||'a' AS "Bib Number"
 FROM
@@ -17,3 +24,4 @@ WHERE
 ORDER BY
 	1
 ;
+
