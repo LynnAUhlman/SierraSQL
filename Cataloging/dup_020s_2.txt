@@ -1,0 +1,20 @@
+﻿SELECT 
+  subfield_view.content AS 'ISBN',
+  'b'||subfield_view.record_num||'a' AS 'Bib Record',
+  bib_record.bcode2 AS 'Mattype',
+  phrase_entry.insert_title AS 'Title' 
+  
+FROM 
+  sierra_view.subfield_view, 
+  sierra_view.phrase_entry, 
+  sierra_view.bib_record
+WHERE 
+  phrase_entry.record_id = subfield_view.record_id AND
+  phrase_entry.record_id = bib_record.record_id AND
+  subfield_view.marc_tag='020'
+group by 
+subfield_view.content,
+subfield_view.record_num,
+bib_record.bcode2,
+phrase_entry.insert_title
+having count(*) > 1;

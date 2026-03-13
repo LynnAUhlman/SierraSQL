@@ -1,0 +1,28 @@
+﻿SELECT 
+  patron_view.barcode AS "Patron Barcode",
+  bib_view.record_num AS "Bib Record #",
+  item_view.record_num AS "Item Record #",
+  hold.location_code AS "Branch Location", 
+  hold.pickup_location_code AS "P/U Location", 
+  hold.is_ir AS "IR", 
+  hold.status AS "Hold Status"
+FROM 
+  sierra_view.hold,
+  sierra_view.circ_trans,
+  sierra_view.bib_record,
+  sierra_view.bib_view,
+  sierra_view.patron_record,
+  sierra_view.patron_view,
+  sierra_view.item_record,
+  sierra_view.item_view
+WHERE
+  circ_trans.patron_record_id = patron_record.record_id AND
+  hold.patron_record_id = patron_record.record_id AND
+  patron_record.id = patron_view.id AND
+  circ_trans.bib_record_id = bib_record.record_id AND
+  bib_record.record_id = bib_view.id AND
+  circ_trans.item_record_id = item_record.record_id AND
+  item_record.record_id = item_view.id AND
+  circ_trans.op_code IN ('n','nb','ni','nv','h','hb','hi','hv','f')
+  ;
+  

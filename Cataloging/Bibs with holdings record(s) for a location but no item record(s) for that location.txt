@@ -1,0 +1,22 @@
+ (select
+   'b' || b.record_num AS bnum
+ from
+   sierra_view.bib_record_holding_record_link Lr
+   inner join sierra_view.holding_record_location h on
+     Lr.holding_record_id = h.holding_record_id
+    inner join sierra_view.bib_view b on
+     Lr.bib_record_id = b.id
+ where
+   h.location_code like 'xc%')
+ EXCEPT
+ (select
+   'b' || b.record_num AS bnum
+ from
+   sierra_view.bib_record_item_record_link Lrr
+   inner join sierra_view.item_record i on
+     Lrr.item_record_id = i.record_id
+    inner join sierra_view.bib_view b on
+     Lrr.bib_record_id = b.id
+ where
+     i.location_code like 'xc%')
+ ;

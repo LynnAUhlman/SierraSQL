@@ -1,0 +1,22 @@
+﻿SELECT 
+  bib_view.record_num AS "Bib #", 
+  item_view.record_num AS "Item #", 
+  varfield_view.varfield_type_code AS "Record Code", 
+  varfield_view.marc_tag AS "Marc Tag", 
+  varfield_view.field_content AS "Marc Data"
+FROM 
+  sierra_view.bib_record, 
+  sierra_view.item_record, 
+  sierra_view.bib_record_item_record_link, 
+  sierra_view.varfield_view, 
+  sierra_view.bib_view, 
+  sierra_view.item_view
+WHERE 
+  bib_record.id = bib_view.id AND
+  bib_record_item_record_link.bib_record_id = bib_record.record_id AND
+  bib_record_item_record_link.item_record_id = item_record.record_id AND
+  varfield_view.record_id = bib_record.record_id AND
+  item_view.id = item_record.id AND
+  varfield_view.record_type_code = 'b' AND 
+  varfield_view.marc_tag = '020' AND 
+  varfield_view.field_content LIKE '9780792797210';

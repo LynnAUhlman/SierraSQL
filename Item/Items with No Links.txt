@@ -1,0 +1,29 @@
+##Since it’s not possible to search for item records with no links in Create Lists, 
+##I decided to work up something in SQL. The following query brings up 6 records 
+##on our system:...Of course, the only thing I can think of to do with these is 
+##simply ask Innovative to delete them, as there’s no link to a bib and so it’s  
+##unlikely we’ll find where they actually belong… Only one of them even has a barcode.
+##John D. Boggs, PLAN Database Manager
+##Peninsula Library System
+##2471 Flores Street
+##San Mateo, CA  94403-2273
+##(650)571-6799 x3062
+##boggs@plsinfo.org
+
+SELECT
+
+  *
+
+FROM
+
+  sierra_view.item_view
+
+LEFT JOIN
+
+  sierra_view.bib_record_item_record_link ON
+
+  item_view.id = bib_record_item_record_link.item_record_id
+
+WHERE
+
+  bib_record_item_record_link.item_record_id is NULL

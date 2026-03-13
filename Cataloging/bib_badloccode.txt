@@ -1,0 +1,12 @@
+--
+-- Bib record bad location code records
+--
+SELECT 
+  id2reckey(brl.bib_record_id),
+  brl.location_code AS "Value"
+FROM
+  sierra_view.bib_record_location brl
+  LEFT JOIN sierra_view.location_myuser lm ON brl.location_code = lm.code
+WHERE lm.code IS NULL AND 
+brl.location_code NOT IN ('multi', 'none')
+ORDER BY 2

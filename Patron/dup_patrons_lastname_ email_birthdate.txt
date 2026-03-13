@@ -1,0 +1,19 @@
+--
+-- Find duplicate patrons that share a last name, email address and birthdate
+--
+SELECT 
+  id2reckey(p1.id) AS "Patron 1",
+  prf1.last_name || ', ' || prf1.first_name || ' ' || prf1.middle_name AS "Patron 1 Name",
+  id2reckey(p2.id) AS "Patron 2",
+  prf2.last_name || ', ' || prf2.first_name || ' ' || prf2.middle_name AS "Patron 2 Name",
+  e1.field_content AS "Email Address",
+  TO_CHAR(p1.birth_date_gmt, 'MM/DD/YYYY')AS "Birth Date"
+FROM 
+  sierra_view.patron_record p1
+  JOIN sierra_view.patron_record p2 ON p1.birth_date_gmt = p2.birth_date_gmt
+  JOIN sierra_view.patron_record_fullname prf1 ON p1.id = prf1.patron_record_id
+  JOIN sierra_view.patron_record_fullname prf2 ON p2.id = prf2.patron_record_id
+  JOIN sierra_view.varfield e1 ON p1.id = e1.record_id AND e1.varfield_type_code = 'z'
+  JOIN sierra_view.varfield e2 ON p2.id = e2.record_id AND e2.varfield_type_code = 'z'
+WHERE 
+  p1.id > p2.id AND prf1.last_name = prf2.last_name AND e1.field_content = e2.field_content

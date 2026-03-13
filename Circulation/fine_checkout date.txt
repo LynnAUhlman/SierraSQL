@@ -1,0 +1,17 @@
+-- get a list of fine data to find checkout date
+SELECT
+f.patron_record_id			AS "Patron Record",
+f.assessed_gmt::date		AS "Assessed Date",
+f.item_record_metadata_id 	AS "Item Record Meta",
+f.due_gmt::date				AS "Due Date",
+f.checkout_gmt::date		AS "Checkout Date",
+f.returned_gmt::date		AS "Returned Date",
+f.original_patron_record_metadata_id	AS "Patron Record Meta"
+
+FROM
+sierra_view.fine as f
+
+
+WHERE
+f.checkout_gmt::date >= '2017-01-01'
+;		

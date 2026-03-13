@@ -1,0 +1,9 @@
+--
+-- Find item records linked to two or more bib records
+--
+SELECT 
+  id2reckey(l.item_record_id) AS "Item Record"
+FROM 
+  sierra_view.bib_record_item_record_link l
+GROUP BY l.item_record_id
+HAVING COUNT(l.item_record_id) > 1

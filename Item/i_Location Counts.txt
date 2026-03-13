@@ -1,0 +1,20 @@
+﻿SELECT
+z.location_code,
+count (z.id) as "item_total",
+sum (z.last_year_to_date_checkout_total) as "LYCIRC",
+sum (z.year_to_date_checkout_total) as "YTDCIRC"
+
+FROM
+sierra_view.item_view            AS z
+ 
+INNER JOIN
+sierra_view.record_metadata        AS r
+  ON r.id = z.id
+ 
+GROUP BY
+z.location_code,
+z.last_year_to_date_checkout_total,
+z.year_to_date_checkout_total
+
+ORDER BY
+z.location_code

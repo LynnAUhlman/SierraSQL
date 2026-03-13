@@ -1,0 +1,126 @@
+-- ============================================================================
+-- Current Holds with data from circ_trans table
+-- NOTE: only holds that were placed within the retention period of the
+--   circ_trans table will included
+-- Brent Searle. Langara College. 2017-06-14
+-- ============================================================================
+SELECT
+  to_char(ct.transaction_gmt,'yyyy-mm-dd hh:mi:ss AM')   AS "Trans Date",
+  concat(
+    pnam.last_name,
+    CASE
+      WHEN pnam.first_name IS NULL THEN NULL
+      ELSE ', '||pnam.first_name
+    END
+  )                                                      AS "Patron Name",
+  TRIM(regexp_replace(vfbt.field_content,'\|.',' ','g')) AS "Title / Author",
+  ct.application_name                                    AS "Trans App",
+  ct.source_code                                         AS "Trans Source",
+  sgnam.name                                             AS "Stat Group",
+  CASE
+    WHEN ct.op_code = 'n'  THEN 'Hold'
+    WHEN ct.op_code = 'nb' THEN 'Bib Hold'
+    WHEN ct.op_code = 'ni' THEN 'Item Hold'
+    WHEN ct.op_code = 'nv' THEN 'Volume Hold'
+    WHEN ct.op_code = 'h'  THEN 'Hold with Recall'
+    WHEN ct.op_code = 'hb' THEN 'Bib Hold with Recall'
+    WHEN ct.op_code = 'hi' THEN 'Item Hold with Recall'
+    WHEN ct.op_code = 'hv' THEN 'Volume Hold with Recall'
+    ELSE 'unexpected code '||ct.op_code
+  END                                                    AS "Trans Type",
+  concat(
+    rm.record_type_code,
+    rm.record_num,
+    'a'
+  )                                                      AS "Record on Hold",
+  CASE
+    WHEN hld.is_frozen IS FALSE THEN 'No'
+    WHEN hld.is_frozen IS TRUE  THEN 'Yes'
+    ELSE 'unexpected response'
+  END                                                    As "Frozen",
+  hld.delay_days                                         AS "Delay Days",
+  CASE
+    WHEN date_part('hour', hld.expires_gmt) = 0
+     AND date_part('minute', hld.expires_gmt) = 0
+    THEN to_char(hld.expires_gmt,'YYYY-MM-DD')
+    ELSE to_char(hld.expires_gmt,'YYYY-MM-DD HH:MI AM')
+  END                                                    AS "Not Needed After",
+  CASE
+    WHEN hld.status = '0' 
+    THEN 'On hold'
+    WHEN hld.status = 'b' 
+    THEN 'Bib hold ready for pickup'
+    WHEN hld.status = 'j' 
+    THEN 'Volume hold ready for pickup'
+    WHEN hld.status = 'i' 
+    THEN 'Item hold ready for pickup'
+    WHEN hld.status = 't' 
+    THEN 'Bib, Item, or Volume in transit to pickup location'
+    ELSE 'unexpected code '||hld.status
+  END                                                    AS "Hold Status",
+  locnam.name                                            AS "P/U Location",
+  hld.note                                               AS "Hold Note",
+  CASE
+    WHEN hld.is_ill IS FALSE THEN 'No'
+    WHEN hld.is_ill IS TRUE THEN 'Yes'
+    ELSE 'unexpected option '||hld.is_ill
+  END                                                    AS "ILL",
+  CASE
+    WHEN hld.is_ir IS FALSE THEN 'No'
+    WHEN hld.is_ir IS TRUE THEN 'Yes'
+    ELSE 'unexpected option '||hld.is_ir
+  END                                                    AS "INN-Reach",
+  hld.ir_pickup_location_code                            AS "IR P/U Location",
+  hld.ir_print_name                                      AS "IR Print Name",
+  hld.ir_delivery_stop_name                              AS "IR Del Stop"
+FROM
+  sierra_view.hold                                       AS hld
+JOIN
+  sierra_view.patron_record_fullname                     AS pnam
+  ON
+  pnam.patron_record_id = hld.patron_record_id
+JOIN
+  sierra_view.location_myuser                            AS locnam
+  ON
+  locnam.code = hld.pickup_location_code
+JOIN
+  sierra_view.record_metadata                            AS rm
+  ON
+  rm.id = hld.record_id
+JOIN
+  sierra_view.circ_trans                                 AS ct
+  ON
+  ct.patron_record_id = hld.patron_record_id
+  AND
+  (
+    ct.transaction_gmt = hld.placed_gmt
+    AND
+    (
+      ct.item_record_id = hld.record_id
+      Or
+      ct.bib_record_id = hld.record_id
+      OR
+      ct.volume_record_id = hld.record_id
+    )
+  )
+  AND
+  (
+    ct.op_code LIKE 'n%' -- regular holds
+    OR
+    ct.op_code LIKE 'h%' -- holds with recall
+  )
+JOIN
+  sierra_view.statistic_group_myuser                     AS sgnam
+  ON
+  sgnam.code = ct.stat_group_code_num
+LEFT JOIN
+  sierra_view.varfield                                   AS vfbt
+  ON
+  vfbt.record_id = ct.bib_record_id
+  AND
+  vfbt.marc_tag = '245'
+  AND
+  vfbt.occ_num = 0
+ORDER BY -- sort by columns 1,2, and 3
+  2,1,3
+;

@@ -1,0 +1,24 @@
+﻿ SELECT 'b' || relbibs.record_num || 'a' AS bnum,
+        allbibs.varfield_type_code,
+        allbibs.marc_tag,
+        allbibs.marc_ind1,
+        allbibs.marc_ind2,
+        allbibs.field_content
+ FROM
+   (SELECT v.record_id,
+          v.varfield_type_code,
+          v.marc_tag,
+          v.marc_ind1,
+          v.marc_ind2,
+          v.field_content
+   FROM sierra_view.varfield v, sierra_view.bib_record b
+   WHERE v.record_id = b.record_id
+         AND marc_tag = '020') allbibs
+ INNER JOIN
+     (SELECT vv.record_id, bb.record_num
+     FROM sierra_view.varfield vv, sierra_view.bib_view bb
+     WHERE   marc_tag = '020'
+             AND vv.record_id = bb.id
+             AND field_content ~ '\|a.*\|a') relbibs
+ ON allbibs.record_id = relbibs.record_id
+ ORDER by bnum ASC;

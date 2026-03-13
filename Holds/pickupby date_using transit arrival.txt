@@ -1,0 +1,29 @@
+﻿SELECT 
+  item_view.record_num				AS "Item #", 
+  bib_view.record_num				AS "Bib #",
+  item_view.item_status_code			AS "Status", 
+  hold.status					AS "Type of Hold", 
+  record_metadata.record_num			AS "Item #", 
+  item_view.last_checkin_gmt			AS "Last CheckIn",
+  record_metadata.record_last_updated_gmt	AS "Last Updated",
+  hold.pickup_location_code			AS "Pickup Location",  
+  item_view.location_code 			AS "Location Code" 
+FROM 
+  sierra_view.circ_trans,
+  sierra_view.item_view, 
+  sierra_view.hold, 
+  sierra_view.record_metadata, 
+  sierra_view.bib_record_item_record_link, 
+  sierra_view.bib_view
+WHERE 
+  circ_trans.item_record_id = item_view.id AND 
+  item_view.id = hold.record_id AND
+  item_view.record_num = record_metadata.record_num AND
+  bib_record_item_record_link.item_record_id = item_view.id AND
+  bib_record_item_record_link.bib_record_id = bib_view.id AND
+  item_view.item_status_code = '!' AND
+  (current_date - item_view.last_checkin_gmt::date) >=13 AND
+  (current_date - record_metadata.record_last_updated_gmt ::date) >=15
+ORDER BY
+  record_metadata.record_last_updated_gmt ASC, 
+  item_view.location_code ASC;

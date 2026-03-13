@@ -1,0 +1,25 @@
+﻿SELECT 
+  item_view.barcode AS "item barcode",
+  item_record_property.call_number AS "call #",
+  item_record.location_code AS "location",
+  hold.placed_gmt AS "Date placed", 
+  hold.is_ir_converted_request AS "IR Converted Rqst", 
+  hold.pickup_location_code AS "P/U Location", 
+  hold.is_ir AS "IR", 
+  hold.status AS "Hold Status"
+FROM 
+  sierra_view.hold, 
+  sierra_view.item_record_property,
+  sierra_view.item_view, 
+  sierra_view.item_record, 
+  sierra_view.patron_record, 
+  sierra_view.patron_view
+WHERE 
+  hold.record_id = item_record.record_id AND
+  hold.patron_record_id = patron_record.record_id AND
+  item_view.id = item_record.id AND
+  item_record_property.item_record_id = item_record.id AND
+  patron_record.id = patron_view.id AND
+  hold.placed_gmt::date >= '2017-08-11' AND
+  item_record.location_code LIKE 'brw%' AND
+  item_record.item_status_code = '-';

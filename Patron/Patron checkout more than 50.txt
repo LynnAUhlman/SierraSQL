@@ -1,0 +1,15 @@
+SELECT  
+  patron_view.barcode AS "Patron #",
+  patron_record.checkout_count AS "# Checked Out"
+FROM
+  sierra_view.patron_record,
+  sierRa_view.patron_view
+WHERE
+  patron_view.id = patron_record.id AND
+  patron_record.checkout_count > 50
+GROUP BY
+  patron_record.checkout_count,
+  patron_view.barcode
+ORDER BY 
+  2 DESC
+;

@@ -1,0 +1,36 @@
+﻿SELECT
+'b' || r.record_num AS bib_record_num,
+'b'||bv.record_num||'a',
+v.field_content,
+count(*)
+
+FROM
+sierra_view.record_metadata as r
+
+JOIN
+sierra_view.varfield as v
+ON
+  (v.record_id = r.id) AND (v.marc_tag = '001')
+
+WHERE
+r.record_type_code = 'b' AND
+LEFT JOIN
+-- join to MARC 001 data
+  sierra_view.subfield                    AS oclc001
+  ON
+  oclc001.record_id = b.record_id
+  AND
+  oclc001.marc_tag = '001'
+WHERE
+ -- MARC 001 or 035 field data
+ -- starts with OCLC prefix
+  oclc001.content ~ '^(ocm|ocn|on)'
+
+GROUP BY 
+v.field_content,
+bib_record_num
+
+HAVING
+count(*) > 1
+
+

@@ -1,0 +1,10 @@
+SELECT
+	home_library_code,
+	CONCAT('p',record_num,'a') as record_number
+FROM
+	sierra_view.patron_view as pv
+WHERE
+	barcode IS NULL
+ORDER BY
+	home_library_code			
+	

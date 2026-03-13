@@ -1,0 +1,48 @@
+SELECT Count (concat(
+    pr.last_name,
+    CASE
+      WHEN pr.first_name IS NULL THEN ''
+      ELSE ', '||PR.first_name
+    END, 
+    CASE
+      WHEN pr.middle_name IS NULL THEN ''
+      ELSE ' '||PR.middle_name
+    END
+  )),
+  concat(
+    pr.last_name,
+    CASE
+      WHEN pr.first_name IS NULL THEN ''
+      ELSE ', '||pr.first_name
+    END, 
+    CASE
+      WHEN pr.middle_name IS NULL THEN ''
+      ELSE ' '||pr.middle_name
+    END
+  )                                              AS "Patron Name", 
+pv.barcode, 
+pv.home_library_code 
+
+FROM 
+sierra_view.patron_record_fullname pr,
+sierra_view.patron_view pv
+
+WHERE 
+pr.patron_record_id = pv.id AND
+pv.home_library_code like '%'
+
+GROUP BY 
+pv.barcode, pv.home_library_code, pr.last_name, pr.first_name, pr.middle_name
+
+HAVING COUNT
+(concat(pr.last_name,
+    CASE
+      WHEN pr.first_name IS NULL THEN ''
+      ELSE ', '||pr.first_name
+    END, 
+    CASE
+      WHEN pr.middle_name IS NULL THEN ''
+      ELSE ' '||pr.middle_name
+    END
+  )) > 1
+;  

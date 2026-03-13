@@ -1,0 +1,51 @@
+SELECT 
+  pview.barcode AS "Patron bcode#",
+  hld.placed_gmt AS "Date placed", 
+  sgnam.code AS "Stat Grp #",
+  hld.is_ir_converted_request AS "IR Converted Rqst", 
+  hld.pickup_location_code AS "P/U Location", 
+  hld.is_ir AS "IR", 
+  hld.status AS "Hold Status"
+FROM 
+  sierra_view.hold 										AS hld
+JOIN
+  sierra_view.patron_view			                    AS pview
+  ON
+  pview.id = hld.patron_record_id
+JOIN
+  sierra_view.location_myuser                            AS locnam
+  ON
+  locnam.code = hld.pickup_location_code
+JOIN
+  sierra_view.record_metadata                            AS rm
+  ON
+  rm.id = hld.record_id
+JOIN
+  sierra_view.circ_trans                                 AS ct
+  ON
+  ct.patron_record_id = hld.patron_record_id
+  AND
+  (
+    ct.transaction_gmt = hld.placed_gmt
+    AND
+    (
+      ct.item_record_id = hld.record_id
+      Or
+      ct.bib_record_id = hld.record_id
+      OR
+      ct.volume_record_id = hld.record_id
+    )
+  )
+  AND
+  (
+    ct.op_code LIKE 'n%' -- regular holds
+    OR
+    ct.op_code LIKE 'h%' -- holds with recall
+  )
+JOIN
+  sierra_view.statistic_group_myuser                     AS sgnam
+  ON
+  sgnam.code = ct.stat_group_code_num
+ORDER BY -- sort by columns 1,2, and 3
+  1,2,3
+;

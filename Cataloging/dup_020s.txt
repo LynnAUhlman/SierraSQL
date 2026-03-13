@@ -1,0 +1,10 @@
+﻿SELECT
+subfield_view.content,
+'.b'||subfield_view.record_num||'a'
+FROM
+sierra_view.subfield_view
+where marc_tag='020'
+group by 
+subfield_view.content,
+subfield_view.record_num
+having count(*) > 1;

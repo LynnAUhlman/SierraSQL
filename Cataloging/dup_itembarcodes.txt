@@ -1,0 +1,5 @@
+select count(item_view.barcode) as numDups, item_view.barcode 
+from sierra_view.item_view
+Group by item_view.barcode
+Having count(item_view.barcode) > 1
+  ;  

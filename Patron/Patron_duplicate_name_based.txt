@@ -1,0 +1,28 @@
+--Some names only listed once despite having duplicates in the system
+/*
+Jeremy Goldstein
+Minuteman Library Network
+Based on code shared by Ray Voelker
+Identifies potentially duplicated patron records based on matching birth_date and near matching name
+*/
+
+DROP TABLE IF EXISTS dupes;
+CREATE TEMP TABLE dupes AS
+@@ -87,12 +93,14 @@ SELECT
+MAX(patron_record_num) AS max_record_num,
+NAME,
+ptype_code,
+birth_date
+birth_date,
+created
+FROM
+dupes
+GROUP BY 2,3,4
+GROUP BY 5,2,3,4
+)t2
+ON t1.birth_date = t2.birth_date AND t1.patron_record_num = t2.max_record_num 
+--WHERE t1.ptype_code = '2'
+GROUP BY 3,1,5,6,7,8,9
+HAVING COUNT(t1.name) = 1
+ORDER BY 4,6,1,3 
+ ProTi

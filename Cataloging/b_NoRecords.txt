@@ -1,0 +1,25 @@
+SELECT
+  'b'||bib_view.record_num||'a'
+FROM
+  sierra_view.bib_view
+LEFT JOIN
+  sierra_view.bib_record_item_record_link ON
+  bib_view.id = bib_record_item_record_link.bib_record_id
+LEFT JOIN
+  sierra_view.bib_record_holding_record_link ON
+  bib_view.id = bib_record_holding_record_link.bib_record_id
+LEFT JOIN
+  sierra_view.bib_record_order_record_link ON
+  bib_view.id = bib_record_order_record_link.bib_record_id
+LEFT JOIN
+  sierra_view.course_record_bib_record_link  ON
+  bib_view.id = course_record_bib_record_link.bib_record_id
+  
+WHERE
+bib_record_item_record_link.item_record_id is NULL and
+bib_record_holding_record_link.holding_record_id is NULL and
+bib_record_order_record_link.order_record_id is NULL and
+course_record_bib_record_link.course_record_id is NULL
+
+
+

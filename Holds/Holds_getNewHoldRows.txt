@@ -1,0 +1,35 @@
+set search_path = sierra_view;
+​
+with excluded(_id) as (values ${hash_set_param:raw})
+​
+select * from (
+  select
+    md5(hd::text) as _id,	
+    hd.id,				
+    --h.patron_record_id,  -- ignore patron identifications
+    hd.record_id,
+    hd.placed_gmt,
+    hd.is_frozen,
+    hd.delay_days,
+    hd.location_code,
+    hd.expires_gmt,
+    hd.status,
+    hd.pickup_location_code,
+    hd.note,
+    hd.patron_records_display_order,
+    rmeta.record_type_code  as "rmeta__record_type_code",
+    rmeta.record_num        as "rmeta__record_num",
+    timezone('utc', now())  as "cloned_at"
+    
+  from hold as hd 
+​
+    left outer join record_metadata as rmeta
+      on rmeta.id = hd.record_id 
+) as h
+​
+where not exists(select 1 from excluded ex where h._id = ex._id)
+​
+order by h.id
+​
+${limit_param:raw}                -- limit param
+;

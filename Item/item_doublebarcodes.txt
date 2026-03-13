@@ -1,0 +1,36 @@
+SELECT
+i.record_id as item_record_id,
+r.record_num as item_record_num,
+i.location_code,
+v.field_content,
+v.occ_num
+
+FROM
+sierra_view.item_record as i
+
+JOIN
+sierra_view.record_metadata as r
+  ON r.id = i.record_id
+  
+JOIN sierra_view.varfield AS v 
+  ON v.record_id = i.record_id
+  AND v.varfield_type_code = 'b'
+
+WHERE
+i.record_id IN (
+  SELECT
+  ir.record_id
+  FROM
+  sierra_view.item_record as ir
+  JOIN sierra_view.varfield AS vf 
+    ON vf.record_id = ir.record_id
+    AND vf.varfield_type_code = 'b'
+  GROUP BY
+  ir.record_id
+  HAVING
+  count(*) > 1
+)
+
+ORDER BY
+i.record_id,
+v.occ_num

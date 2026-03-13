@@ -1,0 +1,13 @@
+SELECT 
+  iii_user.name AS "Login", 
+  iii_user.statistic_group_code_num AS "ID", 
+  iii_user.scope_menu_id AS "Scope"
+FROM 
+  sierra_view.iii_user,
+  sierra_view.iii_user_permission_myuser
+  
+WHERE
+  iii_user.id = iii_user_permission_myuser.iii_user_id AND
+  iii_user.scope_menu_id IS NULL AND
+  iii_user_permission_myuser.permission_num = 25
+  ;

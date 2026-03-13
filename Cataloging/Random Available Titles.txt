@@ -1,0 +1,41 @@
+--Jeremy Goldstein
+--Minuteman Library Network
+--updated for Minerva
+
+
+SELECT *
+FROM(
+SELECT
+--link to Encore
+DISTINCT 'https://searchminerva.maine.edu/iii/encore/record/C__R'||id2reckey(b.bib_record_id)   AS url,
+B.best_title as title,
+B.best_author as author,
+'https://contentcafe2.btol.com/ContentCafeClient/ContentCafe.aspx?UserID=EBSMGMI251&Password=CC04469&ItemKey='||SUBSTRING(MAX(s.content) FROM '[0-9]+')||'/&Options=N' AS cover
+FROM
+sierra_view.bib_record_property b
+JOIN
+sierra_view.bib_record_item_record_link l
+ON
+b.bib_record_id = l.bib_record_id
+JOIN
+sierra_view.item_record i
+ON
+l.item_record_id = i.id
+AND
+i.is_available_at_library = 'TRUE'
+AND i.item_status_code NOT IN ('!', '$', '5', 'a', 'b', 'd', 'e', 'f', 'g', 'i', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 't', 'w', 'z', '#', '_', '%', '&', '(', ')', '@',)
+AND SUBSTRING(i.location_code,4,1) NOT IN ('j', 'y') ; omits juvenile and ya materials
+JOIN
+sierra_view.varfield_view v
+ON
+b.bib_record_id = v.record_id AND v.varfield_type_code = 'd' 
+--Limit to a subject
+AND v.field_content LIKE '%Boston Red Sox%'
+JOIN sierra_view.subfield s
+ON
+b.bib_record_id = s.record_id AND s.marc_tag = '020' AND s.tag = 'a'
+WHERE
+b.material_code = 'a' AND b.publish_year >= '2013'
+GROUP BY 1,2,3) a
+ORDER BY RANDOM()
+LIMIT 40;

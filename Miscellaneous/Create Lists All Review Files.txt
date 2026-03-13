@@ -1,0 +1,12 @@
+﻿SELECT
+bi.id AS "#",
+bi.name AS "Name",
+bi.max AS "Max #",
+bi.count AS "Count",
+bi.bool_gmt AS "Date Run",
+bi.iii_user_name AS "login",
+bi.owner_iii_user_name AS "Owned by"
+
+FROM
+sierra_view.bool_info AS bi
+;

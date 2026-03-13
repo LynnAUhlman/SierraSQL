@@ -1,0 +1,25 @@
+﻿SELECT 
+id2reckey(f.patron_record_id) AS "ID",
+p.home_library_code AS "Home Lib",
+date(p.activity_gmt) AS "Last Activity",
+date(f.assessed_gmt) AS "Date Assessed",
+f.item_charge_amt AS "Charge Amount",
+f.description AS "Reason"
+
+FROM sierra_view.fine f,
+sierra_view.patron_record p
+
+WHERE 
+f.patron_record_id = p.record_id AND
+f.charge_code IN ('1')
+
+GROUP BY 
+f.patron_record_id, 
+p.home_library_code,
+date(p.activity_gmt), 
+date(f.assessed_gmt), 
+f.item_record_metadata_id, 
+f.item_charge_amt,
+f.description
+
+HAVING count(*) > 1

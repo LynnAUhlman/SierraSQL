@@ -1,0 +1,22 @@
+﻿SELECT 
+  patron_view.barcode AS "patron barcode", 
+  item_view.barcode AS "item barcode", 
+  item_view.item_status_code AS "item status",
+  hold.placed_gmt AS "Date placed", 
+  hold.is_ir_converted_request AS "IR Converted Rqst", 
+  hold.pickup_location_code AS "P/U Location", 
+  hold.is_ir AS "IR", 
+  hold.status AS "Hold Status"
+FROM 
+  sierra_view.hold, 
+  sierra_view.item_view, 
+  sierra_view.item_record, 
+  sierra_view.patron_record, 
+  sierra_view.patron_view
+WHERE 
+  hold.record_id = item_record.record_id AND
+  hold.patron_record_id = patron_record.record_id AND
+  item_view.id = item_record.id AND
+  patron_record.id = patron_view.id AND
+  hold.status IN ('b','i') AND
+  hold.pickup_location_code LIKE '^sp%';

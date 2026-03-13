@@ -1,0 +1,16 @@
+﻿SELECT
+iii_user.name,
+iii_user.full_name,
+iii_user.iii_user_group_code
+iii_user.account_unit
+iii_user.statistic_group_code_num,
+iii_user.system_option_group_code_num
+iii_user.scope_menu_id
+iii_user.location_group_port_number
+iii_user.last_password_change_gmt
+iii_user.is_exempt
+
+FROM
+sierra_view.iii_user
+ORDER BY
+sierra_view.iii_user.name

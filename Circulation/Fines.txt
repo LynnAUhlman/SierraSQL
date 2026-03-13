@@ -1,0 +1,18 @@
+﻿SELECT 
+  fine.billing_fee_amt, 
+  patron_record.home_library_code, 
+  '.p'||patron_view.record_num||'a',
+  fine.item_charge_amt,
+  fine.invoice_num 
+FROM 
+  sierra_view.fine, 
+  sierra_view.patron_record, 
+  sierra_view.patron_view
+WHERE 
+  patron_record.record_id = fine.patron_record_id AND
+  patron_record.id = patron_view.id AND
+  fine.billing_fee_amt >= '5.00' AND
+  fine.item_charge_amt = '0.00'
+
+ORDER BY
+  patron_record.home_library_code;

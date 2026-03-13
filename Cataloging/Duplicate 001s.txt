@@ -1,0 +1,24 @@
+SELECT
+'b' || r.record_num AS bib_record_num,
+v.field_content,
+count(*)
+
+FROM
+sierra_view.record_metadata	as r
+
+JOIN
+sierra_view.varfield		as v
+ON
+  (v.record_id = r.id) AND (v.marc_tag = '001')
+
+WHERE
+r.record_type_code = 'b'
+
+GROUP BY 
+v.field_content,
+bib_record_num
+
+HAVING
+count(*) > 1
+
+limit 100

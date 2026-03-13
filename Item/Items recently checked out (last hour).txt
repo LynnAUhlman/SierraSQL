@@ -1,0 +1,10 @@
+SELECT
+     to_char(c.checkout_gmt, 'MM/DD/YYYY HH24:MI') as checkedout,
+     'b' || v.record_num AS bnum,
+     v.field_content
+ from sierra_view.checkout c, sierra_view.varfield_view v, sierra_view.bib_record_item_record_link L
+ where   c.checkout_gmt > (localtimestamp - interval '1 hour')
+         AND c.item_record_id = L.item_record_id
+         AND L.bib_record_id = v.record_id
+         AND v.marc_tag = '245'
+     order by c.checkout_gmt DESC;

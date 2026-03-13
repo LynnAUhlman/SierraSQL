@@ -1,0 +1,10 @@
+﻿
+SELECT 
+  iii_user.name AS "Login",
+  iii_user.full_name AS "Name",
+  iii_user.scope_menu_id AS "Scope",
+  iii_user.location_group_port_number AS "Locations Served"
+FROM 
+  sierra_view.iii_user
+
+ORDER BY name, iii_user.name;

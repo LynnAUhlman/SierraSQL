@@ -1,0 +1,13 @@
+﻿SELECT 
+  iu.name,
+  upm.permission_name,
+  upm.permission_num
+  
+  FROM 
+  sierra_view.iii_user_permission_myuser upm, 
+  sierra_view.iii_user iu
+  
+WHERE 
+  upm.iii_user_id = iu.id
+  AND iu.location_group_port_number = 47
+ORDER BY upm.permission_name, upm.permission_num;

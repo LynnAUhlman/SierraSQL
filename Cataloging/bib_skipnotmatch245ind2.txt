@@ -1,0 +1,15 @@
+--
+-- Bib Record skip value does not match 245 2nd indicator
+--
+SELECT 
+  id2reckey(br.id) AS "Bib Record",
+  brp.best_title AS "Title",
+  br.skip_num AS "Skip",
+  bt.marc_ind2 AS "MARC 2nd Indicator"
+FROM 
+  sierra_view.bib_record br 
+  JOIN sierra_view.varfield bt ON br.id = bt.record_id
+  JOIN sierra_view.bib_record_property brp ON br.id = brp.bib_record_id
+WHERE 
+  br.skip_num::varchar != bt.marc_ind2 AND bt.varfield_type_code = 't'
+ORDER BY 1

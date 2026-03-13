@@ -1,0 +1,187 @@
+Remove label
+ 
+ 
+More 
+4 of 639
+ 
+[sierra] Spring clean up SQL queries
+LSERV - III
+	x
+Brandon Cole brandon@marmot.org via listserv.iii.com 
+	
+Attachments3:34 PM (21 hours ago)
+	
+to Sierra
+Hello All,
+I had the idea to run some spring clean up queries for my consortium this year. I thought some of you might enjoy these as well. Feel free to share any that you have. Hope these are useful.
+
+Thanks,
+Brandon
+
+Brandon Cole / User Services Manager
+brandon@marmot.org / 970-242-3331 x121
+Marmot Library Network
+https://www.marmot.org
+
+--- You are currently subscribed to sierra as: lynn.uhlman@maineinfonet.org To unsubscribe send a blank email to leave-573417-32245.83ad6d83694b6acb17e0a51adbd374bf@listserv.iii.com
+
+5 Attachments
+Paul, Beth beth.paul@phil.frb.org via listserv.iii.com 
+	
+3:41 PM (21 hours ago)
+	
+to Sierra
+
+Brandon,
+
+ 
+
+Thanks for sharing these. It is appreciated.
+
+ 
+
+Best,
+
+Beth
+
+Beth Paul | Library Systems Administrator
+
+Library & Research Center
+
+T 215.574.4121  F 215.574.3847
+
+https://www.philadelphiafed.org/-/media/_images/FRBPemailSiglogo-Final.gif
+Ten Independence Mall | Philadelphia, PA 19106  | www.philadelphiafed.org
+
+ 
+
+ 
+
+ 
+
+ 
+
+From: Brandon Cole [mailto:brandon@marmot.org]
+Sent: Tuesday, April 18, 2017 3:35 PM
+To: Sierra Users List
+Subject: [External] [sierra] Spring clean up SQL queries
+
+ 
+
+Hello All,
+
+I had the idea to run some spring clean up queries for my consortium this year. I thought some of you might enjoy these as well. Feel free to share any that you have. Hope these are useful.
+
+ 
+
+Thanks,
+
+Brandon
+
+
+Brandon Cole / User Services Manager
+
+brandon@marmot.org / 970-242-3331 x121
+
+Marmot Library Network
+
+https://www.marmot.org
+
+ 
+
+--- You are currently subscribed to sierra as: beth.paul@phil.frb.org To unsubscribe send a blank email to leave-573417-32259.e3f13b88bedd3f0c9346814b957bb0f9@listserv.iii.com
+
+
+--- You are currently subscribed to sierra as: lynn.uhlman@maineinfonet.org To unsubscribe send a blank email to leave-573418-32245.83ad6d83694b6acb17e0a51adbd374bf@listserv.iii.com
+
+Sharon Yang yangs@rider.edu via listserv.iii.com 
+	
+4:05 PM (20 hours ago)
+	
+to Sierra
+Thank you, Brandon. I love those queries.
+
+Sharon/Rider University
+
+On Tue, Apr 18, 2017 at 3:34 PM, Brandon Cole <brandon@marmot.org> wrote:
+
+    Hello All,
+    I had the idea to run some spring clean up queries for my consortium this year. I thought some of you might enjoy these as well. Feel free to share any that you have. Hope these are useful.
+
+    Thanks,
+    Brandon
+
+    Brandon Cole / User Services Manager
+    brandon@marmot.org / 970-242-3331 x121
+    Marmot Library Network
+    https://www.marmot.org
+
+    --- You are currently subscribed to sierra as: yangs@rider.edu To unsubscribe send a blank email to leave-573417-34930.cbeb7c97ec2f127b9ee1488844409153@listserv.iii.com
+
+	
+Click here to Reply or Forward
+10.94 GB (36%) of 30 GB used
+Manage
+Program Policies
+Powered by
+Google
+Last account activity: 14 minutes ago
+Details
+	
+	
+People (4)
+	Brandon Cole
+Recent photos
+View photo in message
+Show details
+
+SELECT Count (concat(
+    patron_record_fullname.last_name,
+    CASE
+      WHEN patron_record_fullname.first_name IS NULL THEN ''
+      ELSE ', '||patron_record_fullname.first_name
+    END, 
+    CASE
+      WHEN patron_record_fullname.middle_name IS NULL THEN ''
+      ELSE ' '||patron_record_fullname.middle_name
+    END
+  )),
+  concat(
+    patron_record_fullname.last_name,
+    CASE
+      WHEN patron_record_fullname.first_name IS NULL THEN ''
+      ELSE ', '||patron_record_fullname.first_name
+    END, 
+    CASE
+      WHEN patron_record_fullname.middle_name IS NULL THEN ''
+      ELSE ' '||patron_record_fullname.middle_name
+    END
+  )                                              AS "Patron Name",
+  patron_record.home_library_code,
+  patron_record.birth_date_gmt
+FROM 
+  sierra_view.patron_record_fullname
+JOIN 
+  sierra_view.patron_record
+ON
+  sierra_view.patron_record_fullname.patron_record_id=sierra_view.patron_record.record_id    
+WHERE
+  patron_record.home_library_code LIKE 'b%'
+AND
+  birth_date_gmt IS NOT NULL  
+GROUP BY
+  patron_record_fullname.first_name, patron_record_fullname.last_name, patron_record_fullname.middle_name, patron_record.home_library_code, patron_record.birth_date_gmt  
+HAVING COUNT (concat(
+    patron_record_fullname.last_name,
+    CASE
+      WHEN patron_record_fullname.first_name IS NULL THEN ''
+      ELSE ', '||patron_record_fullname.first_name
+    END, 
+    CASE
+      WHEN patron_record_fullname.middle_name IS NULL THEN ''
+      ELSE ' '||patron_record_fullname.middle_name
+    END
+  )) > 1
+ORDER BY
+  home_library_code   
+  ;  

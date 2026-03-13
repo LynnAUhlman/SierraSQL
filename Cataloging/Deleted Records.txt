@@ -1,0 +1,30 @@
+﻿SELECT
+  concat (                                               -- Concatenate:
+    record_type_code,                                    --   Record type code
+    record_num,                                          --   Record number
+  COALESCE (                                             --   Modulo 11 check digit:
+    CAST (
+      NULLIF (
+        mod (                                            --     Add the following values:
+          mod ( record_num / 1000000 , 10 ) *  8 +       --       7th place digit of record num x weight of  8
+          mod ( record_num /  100000 , 10 ) *  7 +       --       6th place digit of record num x weight of  7
+          mod ( record_num /   10000 , 10 ) *  6 +       --       5th place digit of record num x weight of  6
+          mod ( record_num /    1000 , 10 ) *  5 +       --       4th place digit of record num x weight of  5
+          mod ( record_num /     100 , 10 ) *  4 +       --       3rd place digit of record num x weight of  4
+          mod ( record_num /      10 , 10 ) *  3 +       --       2nd place digit of record num x weight of  3
+          mod ( record_num           , 10 ) *  2 ,       --       1st place digit of record num x weight of  2
+        11 ) ,                                           --     Get remainder of (sum divided by 11)
+      10 )                                               --     If remainder is 10 then NULL
+    AS CHAR ) ,                                          --     CAST result as alphanumeric
+  'X' )                                                  --     If result is NULL then 'X'
+  )                                                          AS "Bib Record Number"
+FROM
+  sierra_view.record_metadata
+WHERE
+  record_type_code = 'b'
+  AND
+  deletion_date_gmt > (now() - INTERVAL '8 day')
+ORDER BY
+  deletion_date_gmt DESC
+LIMIT 500
+;

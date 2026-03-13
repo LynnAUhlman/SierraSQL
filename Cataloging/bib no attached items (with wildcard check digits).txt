@@ -1,0 +1,19 @@
+SELECT
+	md.record_type_code||md.record_num||'a' AS "Bib Number"
+FROM
+	sierra_view.bib_record bib
+JOIN
+	sierra_view.record_metadata md
+	ON
+	md.id = bib.id
+WHERE
+	bib.id NOT IN
+	(
+		SELECT DISTINCT
+			bib_record_id
+		FROM
+			sierra_view.bib_record_item_record_link
+	)
+ORDER BY
+	1
+;

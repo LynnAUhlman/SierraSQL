@@ -1,0 +1,22 @@
+SELECT 
+  circ_trans.transaction_gmt, 
+  circ_trans.op_code, 
+  item_view.record_num, 
+  item_view.barcode, 
+  item_view.item_status_code
+FROM 
+  sierra_view.circ_trans, 
+  sierra_view.item_record, 
+  sierra_view.item_view
+WHERE 
+  circ_trans.item_record_id = item_record.record_id AND
+  item_record.id = item_view.id AND
+  circ_trans.op_code = 'f' AND 
+  item_view.item_status_code = '!' AND 
+  (current_date - circ_trans.transaction_gmt::date) >= 14
+ORDER BY
+  circ_trans.transaction_gmt ASC, 
+  item_view.record_num ASC, 
+  item_view.barcode ASC, 
+  item_view.item_status_code ASC, 
+  circ_trans.op_code ASC;

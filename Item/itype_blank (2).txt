@@ -1,0 +1,13 @@
+SELECT
+	barcode,
+	itype_code_num,
+	location_code
+FROM
+	sierra_view.item_view as iv
+WHERE
+	itype_code_num = '0'
+AND
+	location_code NOT LIKE '9%'	
+ORDER BY
+	location_code
+	

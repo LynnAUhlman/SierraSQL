@@ -1,0 +1,21 @@
+﻿SELECT 
+  bib_record_property.best_title, 
+  bib_record_item_record_link.bib_record_id, 
+  item_view.record_num, 
+  item_view.item_status_code, 
+  hold.status
+FROM 
+  sierra_view.bib_record_item_record_link, 
+  sierra_view.bib_record_property, 
+  sierra_view.item_view, 
+  sierra_view.hold, 
+  sierra_view.title_paging_report_entry_item
+WHERE 
+  bib_record_item_record_link.item_record_id = item_view.id AND
+  bib_record_property.bib_record_id = bib_record_item_record_link.bib_record_id AND
+  hold.record_id = item_view.id AND
+  item_view.item_status_code = '!' AND 
+  hold.status = 'i'
+ORDER BY
+  bib_record_property.best_title ASC, 
+  bib_record_item_record_link.bib_record_id ASC;

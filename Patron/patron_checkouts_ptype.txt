@@ -1,0 +1,52 @@
+WITH patron_checkout_data as (
+    SELECT
+    r.record_type_code || r.record_num || 'a' as patron_record_num,
+    (
+        SELECT
+        count(c.item_record_id)
+        FROM
+        sierra_view.checkout as c
+        WHERE
+        c.patron_record_id = r.id
+    ) as count_checked_out,
+    (
+        SELECT
+        count(c.item_record_id)
+        FROM
+        sierra_view.checkout as c
+        WHERE
+        c.patron_record_id = r.id
+        and c.overdue_count > 0
+    ) as count_overdue,
+    (
+        SELECT
+        string_agg( id2reckey(c.item_record_id), ' ; ')
+        FROM
+        sierra_view.checkout as c
+        WHERE
+        c.patron_record_id = r.id
+    ) as item_records_checked_out
+    
+
+    FROM
+    sierra_view.record_metadata as r
+
+    JOIN
+    sierra_view.patron_record as p
+    ON
+      p.record_id = r.id
+
+    WHERE
+    r.campus_code = ''
+    AND p.ptype_code = 0
+)
+
+SELECT
+*
+from
+patron_checkout_data
+
+WHERE
+count_checked_out > 0
+
+LIMIT 1000

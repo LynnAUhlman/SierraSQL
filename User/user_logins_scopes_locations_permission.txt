@@ -1,0 +1,21 @@
+﻿
+SELECT 
+  iii_user.name AS "Login",
+  iii_user.full_name AS "Name",
+  iii_user.scope_menu_id AS "Scope",
+  iii_user.location_group_port_number AS "Locations Served",
+  iii_user_permission_myuser.permission_num AS "#"
+  
+FROM 
+  sierra_view.iii_user,
+  sierra_view.iii_user_workflow, 
+  sierra_view.iii_user_workflow_myuser,
+  sierra_view.iii_user_permission_myuser
+
+ WHERE 
+  iii_user.id = iii_user_workflow.id AND
+  iii_user_workflow_myuser.iii_user_id = iii_user_workflow.iii_user_id AND
+  iii_user_workflow_myuser.iii_user_id = iii_user_permission_myuser.iii_user_id AND
+  iii_user_permission_myuser.permission_num = '25'
+
+ORDER BY name, iii_user.name;

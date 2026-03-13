@@ -1,0 +1,34 @@
+﻿SELECT
+item_view.barcode, 
+subview.call_no, 
+item_view.location_code, 
+message, 
+subview.ir_print_name, 
+subview.ir_delivery_stop_name, 
+subview.title, 
+item_view.item_status_code
+
+FROM (
+    SELECT 
+    hold.record_id, 
+    hold.id as id, 
+    innreach.content as message, 
+    hold.ir_print_name, 
+    hold.ir_delivery_stop_name, 
+    bib_view.title, 
+    bib_record_item_record_link.item_record_id, 
+    CONCAT(prestamp.content, ' ', subfield_view.content)AS call_no
+    FROM sierra_view.hold
+    LEFT JOIN bib_record_item_record_link ON hold.record_id IN (bib_record_item_record_link.bib_record_id, bib_record_item_record_link.item_record_id)
+    LEFT JOIN bib_view ON bib_view.id = bib_record_item_record_link.bib_record_id
+    LEFT JOIN subfield_view ON subfield_view.record_id IN (bib_record_item_record_link.item_record_id, bib_record_item_record_link.bib_record_id) AND subfield_view.marc_tag = '099' AND subfield_view.tag='a'
+    LEFT JOIN subfield_view prestamp ON prestamp.record_id IN (bib_record_item_record_link.item_record_id, bib_record_item_record_link.bib_record_id) AND prestamp.marc_tag = '099' AND prestamp.tag='j'
+    LEFT JOIN subfield_view innreach ON innreach.record_id = bib_record_item_record_link.item_record_id AND innreach.field_type_code = 'm' AND innreach.record_type_code = 'i'
+    WHERE hold.is_frozen = false
+    GROUP BY hold.record_id, hold.id, message, hold.ir_print_name, hold.ir_delivery_stop_name, bib_view.title, bib_record_item_record_link.item_record_id, patron_record.ptype_code, call_no
+) as subview
+LEFT JOIN item_view ON item_view.id = subview.item_record_id
+-- Replace branch_code with 2 character branch code
+WHERE ir_delivery_stop_name IS NOT NULL AND item_status_code = '('
+GROUP BY message, barcode, call_no, location_code, ir_print_name, ir_delivery_stop_name, title, item_status_code
+ORDER BY call_no ASC, location_code ASC

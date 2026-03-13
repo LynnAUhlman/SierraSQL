@@ -1,0 +1,36 @@
+﻿SELECT
+    id2reckey(phrase_entry.record_id) AS rid,
+    index_entry,
+    bib_record.bcode1 AS "BIB LEVEL",
+    bib_record.bcode2 AS "MATTYPE",
+    bib_record.bcode3 AS "BCODE3",
+    bib_record.cataloging_date_gmt::date AS "Cat Date",
+    bib_view.title AS "TITLE",
+    varfield_view.record_num AS "Record #",
+    varfield_view.marc_tag AS "TAG"
+FROM
+    sierra_view.phrase_entry,
+    sierra_view.varfield_view,
+    sierra_view.bib_view,
+    sierra_view.bib_record
+WHERE
+    bib_record.record_id = phrase_entry.record_id AND
+    bib_record.record_id = bib_view.id AND
+    varfield_view.record_num = bib_view.record_num AND
+    index_tag = 'i' AND
+    marc_tag = '020' AND
+    index_entry IN (
+        SELECT
+            index_entry
+        FROM
+            sierra_view.phrase_entry
+        WHERE
+            index_tag = 'i'
+        GROUP BY
+            index_entry
+        HAVING
+            count(id) > 1)
+ORDER BY
+    index_entry, rid
+---created by David Jones,Santa Clara University via Sierra Listserv
+---rev. Lynn Uhlman, Maine InfoNet

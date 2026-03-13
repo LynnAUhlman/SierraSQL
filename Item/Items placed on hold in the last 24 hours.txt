@@ -1,0 +1,9 @@
+ SELECT 'i' || i.record_num as inum, TO_CHAR(h.placed_gmt, 'YYYY/MM/DD HH24:MI:SS'), 'b' || b.record_num as bib, v.field_content as barcode, i.location_code
+         from sierra_view.hold h
+   INNER JOIN sierra_view.bib_record_item_record_link l ON h.record_id = l.item_record_id
+   INNER JOIN sierra_view.bib_view b ON b.id = l.bib_record_id
+   INNER JOIN sierra_view.varfield v ON v.record_id = h.record_id
+     AND v.varfield_type_code = 'b'
+   INNER JOIN sierra_view.item_view i ON h.record_id = i.id
+         where h.placed_gmt >= (localtimestamp - interval '24 hour')
+         order by h.placed_gmt;

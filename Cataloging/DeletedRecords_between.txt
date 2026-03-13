@@ -1,0 +1,9 @@
+SELECT 
+	record_metadata.record_type_code||record_metadata.record_num, 
+	record_metadata.deletion_date_gmt
+	FROM 
+	  sierra_view.record_metadata 
+	WHERE 
+	  record_metadata.record_type_code = 'b' AND 
+	  record_metadata.deletion_date_gmt BETWEEN 'yyyy-mm-dd' AND 'yyyy-mm-dd'
+	  ;

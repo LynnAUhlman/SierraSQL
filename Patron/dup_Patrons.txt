@@ -1,0 +1,50 @@
+SELECT Count (concat(
+    patron_record_fullname.last_name,
+    CASE
+      WHEN patron_record_fullname.first_name IS NULL THEN ''
+      ELSE ', '||patron_record_fullname.first_name
+    END, 
+    CASE
+      WHEN patron_record_fullname.middle_name IS NULL THEN ''
+      ELSE ' '||patron_record_fullname.middle_name
+    END
+  )),
+  concat(
+    patron_record_fullname.last_name,
+    CASE
+      WHEN patron_record_fullname.first_name IS NULL THEN ''
+      ELSE ', '||patron_record_fullname.first_name
+    END, 
+    CASE
+      WHEN patron_record_fullname.middle_name IS NULL THEN ''
+      ELSE ' '||patron_record_fullname.middle_name
+    END
+  )                                              AS "Patron Name",
+  patron_record.home_library_code,
+  patron_record.birth_date_gmt
+FROM 
+  sierra_view.patron_record_fullname
+JOIN 
+  sierra_view.patron_record
+ON
+  sierra_view.patron_record_fullname.patron_record_id=sierra_view.patron_record.record_id    
+WHERE
+  patron_record.home_library_code LIKE 'b%'
+AND
+  birth_date_gmt IS NOT NULL  
+GROUP BY
+  patron_record_fullname.first_name, patron_record_fullname.last_name, patron_record_fullname.middle_name, patron_record.home_library_code, patron_record.birth_date_gmt  
+HAVING COUNT (concat(
+    patron_record_fullname.last_name,
+    CASE
+      WHEN patron_record_fullname.first_name IS NULL THEN ''
+      ELSE ', '||patron_record_fullname.first_name
+    END, 
+    CASE
+      WHEN patron_record_fullname.middle_name IS NULL THEN ''
+      ELSE ' '||patron_record_fullname.middle_name
+    END
+  )) > 1
+ORDER BY
+  home_library_code   
+  ;  

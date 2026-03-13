@@ -1,0 +1,10 @@
+﻿SELECT 
+  p.barcode as "patron_barcode",
+  count(h.id) AS "number_of_holds"
+FROM 
+  sierra_view.patron_view p
+JOIN 
+sierra_view.hold h ON h.patron_record_id = p.id
+group by 1
+having count(h.id) > 25;
+

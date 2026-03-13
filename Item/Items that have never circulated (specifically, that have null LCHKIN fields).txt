@@ -1,0 +1,10 @@
+ SELECT
+     'i' || i.record_num || 'a' AS inum
+ FROM
+     sierra_view.varfield v, sierra_view.item_view  i
+ WHERE
+     v.varfield_type_code = 'b'
+     AND v.record_type_code = 'i'
+     AND v.record_id = i.id
+ GROUP BY
+     i.record_num HAVING COUNT(*) > 1;

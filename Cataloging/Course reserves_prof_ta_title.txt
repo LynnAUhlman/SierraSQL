@@ -1,0 +1,29 @@
+SELECT DISTINCT on (coursetitle.field_content, itemtitle.field_content, callnumber.field_content)
+--(regexp_split_to_array(itemtitle.field_content, E'\\|+')) as title_array,
+CASE WHEN strpos(itemtitle.field_content, '|') > 0 THEN
+replace(substring(itemtitle.field_content from '\|a[^|]+') 
+ || COALESCE(substring(itemtitle.field_content from '\|b[^|]+'), '')
+ || COALESCE(substring(itemtitle.field_content from '\|h[^|]+'), '')
+|| COALESCE(substring(itemtitle.field_content from '\|c[^|]+'), '')
+,'|a', '')
+--replace(replace(split_part(replace(itemtitle.field_content,'|a', '|'), '|', 2), ' /', ''), ' :', '')
+ELSE
+                itemtitle.field_content
+END 
+as title,
+replace(replace(replace(COALESCE(max(itemcallnumber.field_content), callnumber.field_content), '|a', ''), '|b', ' '), '|c', ' ')   as callnumber
+-- get call number from item record because bib record contains 'personal copy' flag
+ 
+FROM sierra_view.course_record c
+JOIN sierra_view.course_record_item_record_link ci ON ci.course_record_id = c.record_id
+JOIN sierra_view.item_view i ON ci.item_record_id = i.id
+JOIN sierra_view.bib_record_item_record_link bi ON bi.item_record_id = ci.item_record_id
+JOIN sierra_view.varfield itemtitle ON itemtitle.record_id = bi.bib_record_id and itemtitle.varfield_type_code = 't'
+LEFT OUTER JOIN sierra_view.varfield itemcallnumber ON itemcallnumber.record_id = i.id and itemcallnumber.varfield_type_code = 'c' and itemcallnumber.marc_tag = '090' -- to get call number from item record because bib record contains 'personal copy' flag
+ 
+JOIN sierra_view.varfield callnumber ON callnumber.record_id = bi.bib_record_id and callnumber.varfield_type_code = 'c'
+JOIN sierra_view.varfield coursetitle ON coursetitle.record_id = c.record_id and coursetitle.varfield_type_code = 'r' --and coursetitle.occ_num = 0
+WHERE c.location_code = 'sel'
+ 
+GROUP BY coursetitle.field_content, itemtitle.field_content, callnumber.field_content
+ORDER BY coursetitle.field_content, itemtitle.field_content, callnumber.field_content

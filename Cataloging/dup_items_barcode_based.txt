@@ -1,0 +1,6 @@
+select count(item_view.barcode) as numDups, item_view.barcode, item_view.location_code 
+from sierra_view.item_view
+where item_view.location_code like '%'
+Group by barcode, item_view.location_code
+Having count(item_view.barcode) > 1
+  ;  

@@ -1,0 +1,9 @@
+﻿SELECT
+b.title,
+'b'||b.record_num||'a' as bib_record_number
+
+FROM
+sierra_view.bib_view as b
+
+WHERE
+UPPER (b.title) = b.title

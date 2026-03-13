@@ -1,0 +1,25 @@
+SELECT 
+id2reckey(b.bib_record_id)||'a' as "record_num",
+b.best_title,
+count(item.id) as "item_count"
+
+from 
+sierra_view.bib_record_property as b
+JOIN
+sierra_view.bib_record bib
+ON
+b.bib_record_id = bib.id
+join
+sierra_view.bib_record_item_record_link as link
+on
+b.bib_record_id = link.bib_record_id
+join
+sierra_view.item_view as item
+on
+item.id = link.item_record_id
+AND item.location_code ~ '^mhs'
+
+
+group by 1, 2
+having count(item.id) > 1
+;

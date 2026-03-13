@@ -1,0 +1,25 @@
+﻿SELECT
+    id2reckey(phrase_entry.record_id) AS rid,
+    index_entry,
+    bib_record.cataloging_date_gmt::date AS "Cat Date"
+FROM
+    sierra_view.phrase_entry,
+    sierra_view.bib_record
+WHERE
+    bib_record.record_id = phrase_entry.record_id AND
+    index_tag = 'o' AND
+    index_entry IN (
+        SELECT
+            index_entry
+        FROM
+            sierra_view.phrase_entry
+        WHERE
+            index_tag = 'o'
+        GROUP BY
+            index_entry
+        HAVING
+            count(id) > 1)
+ORDER BY
+    index_entry, rid
+---created by David Jones,Santa Clara University via Sierra Listserv
+---rev. Lynn Uhlman, Maine InfoNet

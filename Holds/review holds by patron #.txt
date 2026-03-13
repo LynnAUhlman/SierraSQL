@@ -1,0 +1,32 @@
+SELECT 
+  hold.placed_gmt, 
+  circ_trans.op_code, 
+  patron_view.record_num, 
+  circ_trans.application_name
+FROM 
+  sierra_view.patron_record, 
+  sierra_view.patron_view, 
+  sierra_view.hold, 
+  sierra_view.circ_trans
+WHERE 
+  patron_record.record_id = patron_view.id AND
+  patron_record.record_id = hold.patron_record_id AND
+  circ_trans.patron_record_id = patron_record.record_id AND
+  patron_view.record_num IN 
+  (1015818,
+  1016294,
+  1015417,
+  1015598,
+  1015375,
+  1015512,
+  1015419,
+  1015523,
+  1016352,
+  1015927,
+  1015343,
+  1015525,
+  1016553,
+  1015522,
+  1015324)
+ORDER BY
+  patron_view.record_num ASC;

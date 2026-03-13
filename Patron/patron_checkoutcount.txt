@@ -1,0 +1,11 @@
+SELECT 
+  patron_view.barcode AS "Patron Barcode", 
+  patron_record.checkout_count AS "Current Checkout" 
+
+FROM 
+  sierra_view.patron_record, 
+  sierra_view.patron_view
+WHERE 
+  patron_record.id = patron_view.id AND
+  patron_record.checkout_count >= '50'
+;

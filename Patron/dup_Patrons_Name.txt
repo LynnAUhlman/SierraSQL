@@ -1,0 +1,11 @@
+﻿SELECT id2reckey(pv.id) AS "patron_number", p.index_entry, pv.barcode, pv.home_library_code, pv.ptype_code
+FROM sierra_view.phrase_entry p
+JOIN sierra_view.patron_view pv ON p.record_id = pv.id
+WHERE p.index_entry IN (
+                SELECT pe.index_entry
+                FROM sierra_view.phrase_entry pe
+                WHERE pe.index_tag = 'n' AND pe.varfield_type_code = 'n'
+                GROUP by pe.index_entry
+                HAVING COUNT(pe.index_entry) > 1
+)
+ORDER BY 2, 1 ASC
