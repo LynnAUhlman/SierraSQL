@@ -1,0 +1,23 @@
+﻿SELECT 
+  item_view.barcode, 
+  circ_trans.transaction_gmt, 
+  circ_trans.item_record_id, 
+  item_record.record_id, 
+  item_view.record_num, 
+  circ_trans.stat_group_code_num, 
+  circ_trans.op_code, 
+  circ_trans.source_code, 
+  circ_trans.application_name
+  
+FROM 
+  sierra_view.item_record, 
+  sierra_view.item_view, 
+  sierra_view.circ_trans
+  
+WHERE 
+  item_view.id = item_record.id 
+  AND circ_trans.item_record_id = item_record.record_id 
+  AND barcode = ''
+  
+ORDER BY circ_trans.transaction_gmt ASC, 
+  item_view.barcode ASC;

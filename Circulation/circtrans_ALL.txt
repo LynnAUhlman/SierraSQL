@@ -1,0 +1,66 @@
+  
+/*
+Jeremy Goldstein
+Minuteman Library Network
+Staff interface for easily pulling data from circ_trans table
+*/
+
+SELECT 
+cir.transaction_gmt AS transaction_time,
+cir.application_name,
+CASE
+  WHEN cir.op_code = 'o' THEN 'checkout'
+  WHEN cir.op_code = 'i' THEN 'checkin'
+  WHEN cir.op_code = 'n' THEN 'hold'
+  WHEN cir.op_code = 'nb' THEN 'bib hold'
+  WHEN cir.op_code = 'ni' THEN 'item hold'
+  WHEN cir.op_code = 'h' THEN 'hold with recall'
+  WHEN cir.op_code = 'hb' THEN 'hold recall bib'
+  WHEN cir.op_code = 'hi' THEN 'hold recall item'
+  WHEN cir.op_code = 'f' THEN 'filled hold'
+  WHEN cir.op_code = 'r' THEN 'renewal'
+  WHEN cir.op_code = 'u' THEN 'use count'
+END AS transaction_type,
+pv.record_type_code||pv.record_num||'a' AS "patron #",
+pv.barcode AS patron_barcode,
+im.record_type_code||im.record_num||'a' AS "item #",
+bm.record_type_code||bm.record_num||'a' AS "bib #",
+cir.stat_group_code_num AS "stat group",
+cir.due_date_gmt AS due_date,
+cir.count_type_code_num AS count_type,
+cir.itype_code_num AS itype,
+cir.icode2 AS "Icode2",
+cir.item_location_code AS "item loc",
+cir.ptype_code,
+cir.patron_home_library_code AS patron_home_library,
+cir.loanrule_code_num AS loanrule,
+irpv.call_number_norm AS call_number,
+irpv.barcode AS item_barcode,
+brpv.best_title_norm AS title,
+brpv.material_code AS mat_type
+
+
+FROM
+sierra_view.circ_trans cir
+JOIN
+sierra_view.item_record_property irpv
+ON
+cir.item_record_id = irpv.item_record_id
+JOIN
+sierra_view.bib_record_property brpv
+ON
+cir.bib_record_id = brpv.bib_record_id
+JOIN
+sierra_view.record_metadata im
+ON
+cir.item_record_id = im.id
+JOIN
+sierra_view.record_metadata bm
+ON
+cir.bib_record_id = bm.id
+JOIN
+sierra_view.patron_view pv
+ON
+cir.patron_record_id = pv.id
+
+;

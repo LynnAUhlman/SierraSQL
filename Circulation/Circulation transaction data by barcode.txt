@@ -1,0 +1,29 @@
+==Find specific transactional data by barcode
+SELECT
+  circ_trans.transaction_gmt AS "Transaction Date",
+  circ_trans.op_code AS "Transaction Type",
+  circ_trans.application_name AS "Portal",
+  circ_trans.due_date_gmt AS "Due Date",
+  circ_trans.loanrule_code_num AS "Loan Rule #",
+  bib_view.record_num AS "Bib #",
+  bib_view.title AS "Title",
+  item_view.record_num AS "Item #",
+  circ_trans.item_location_code AS "Location",
+  item_view.barcode AS "Barcode",
+  patron_view.record_num AS "Patron #",
+  circ_trans.patron_home_library_code AS "Home Library",
+  patron_view.barcode AS "Patron Barcode"
+FROM
+  sierra_view.circ_trans,
+  sierra_view.bib_view,
+  sierra_view.item_view,
+  sierra_view.patron_view
+WHERE
+  circ_trans.bib_record_id = bib_view.id AND
+  circ_trans.patron_record_id = patron_view.id AND
+  circ_trans.item_record_id = item_view.id AND
+  item_view.barcode = ''
+ORDER BY
+  circ_trans.transaction_gmt ASC,
+  circ_trans.item_location_code ASC,
+  circ_trans.patron_home_library_code ASC;
