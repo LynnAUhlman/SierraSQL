@@ -1,17 +1,16 @@
-﻿select 'b'||bib.record_num||'a' as "record_num",
-bib.title,
-count(case when item.location_code != 'zzzzz' then 1 else null end) as "item_count"
-from
-sierra_view.bib_view as bib
-join
-sierra_view.bib_record_item_record_link as link
-on
-bib.id = link.bib_record_id
-join
-sierra_view.item_view as item
-on
-item.id = link.item_record_id
-where
-item.location_code != 'zzzzz'
-group by 1, 2
-order by 3 desc;
+﻿SELECT 
+  bib.materialtype COUNT(*)
+  bib.title,
+COUNT(
+  CASE 
+    WHEN item.location_code != 'zzzzz' THEN 1 
+  ELSE NULL
+  END) AS "item_count"
+FROM sierra_view.bib_view as bib
+JOIN sierra_view.bib_record_item_record_link AS link
+  ON bib.id = link.bib_record_id
+JOIN sierra_view.item_view AS item
+  ON item.id = link.item_record_id
+WHERE item.location_code != 'zzzzz'
+GROUP BY record_num, 
+ORDER BY COUNT DESC;
