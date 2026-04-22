@@ -1,0 +1,17 @@
+SELECT 
+  'p' || pr.record_id || 'a' AS "Patron Record #",
+  pr.home_library_code AS "Home Library",
+  'i' || ir.record_id || 'a' AS "Item Record #",
+  h.placed_gmt AS "Date placed",
+  h.expires_gmt AS "Hold Expires",
+  h.location_code AS "Branch Location", 
+  h.pickup_location_code AS "P/U Location", 
+  h.status AS "Hold Status"
+
+FROM sierra_view.hold h
+
+JOIN sierra_view.item_record ir
+  ON h.record_id = ir.record_id
+
+JOIN sierra_view.patron_record pr
+  ON h.patron_record_id = pr.record_id;
