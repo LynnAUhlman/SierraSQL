@@ -1,0 +1,118 @@
+WITH user_permissions AS (
+    SELECT
+        u.name,
+        p.permission_num
+    FROM
+        sierra_view.iii_user AS u
+    INNER JOIN
+        sierra_view.iii_user_permission_myuser AS p
+            ON p.iii_user_id = u.id
+    WHERE
+        u.name = '[insert username]'
+),
+
+permission_flags AS (
+    SELECT
+        name,
+        
+        -----------------------------------------------------------------
+        -- ITEM PERMISSIONS
+        -----------------------------------------------------------------
+        BOOL_OR(permission_num = 122) AS create_items,
+        BOOL_OR(permission_num = 124) AS update_items,
+        BOOL_OR(permission_num = 125) AS delete_items,
+
+        -----------------------------------------------------------------
+        -- SERIALS / CHECKIN
+        -----------------------------------------------------------------
+        BOOL_OR(permission_num = 77)  AS serials_checkin,
+        BOOL_OR(permission_num = 142) AS create_checkin,
+        BOOL_OR(permission_num = 144) AS update_checkin,
+        BOOL_OR(permission_num = 145) AS delete_checkin,
+        BOOL_OR(permission_num = 89)  AS bind_serials,
+
+        -----------------------------------------------------------------
+        -- BIBLIOGRAPHIC
+        -----------------------------------------------------------------
+        BOOL_OR(permission_num = 102) AS create_bibs,
+        BOOL_OR(permission_num = 104) AS update_bibs,
+        BOOL_OR(permission_num = 105) AS delete_cataloged_bibs,
+        BOOL_OR(permission_num = 106) AS delete_uncataloged_bibs,
+        BOOL_OR(permission_num = 109) AS update_uncataloged,
+
+        -----------------------------------------------------------------
+        -- TRANSFER ATTACHED
+        -----------------------------------------------------------------
+        BOOL_OR(permission_num = 10) AS transfer_attached
+
+    FROM
+        user_permissions
+    GROUP BY
+        name
+)
+
+SELECT
+    name,
+
+    CASE
+
+        -----------------------------------------------------------------
+        -- LEVEL 3
+        -----------------------------------------------------------------
+        WHEN
+            create_bibs = TRUE
+            AND update_bibs = TRUE
+            AND delete_cataloged_bibs = TRUE
+            AND transfer_attached = TRUE
+        THEN 'Cataloging Level 3'
+
+        -----------------------------------------------------------------
+        -- LEVEL 2
+        -----------------------------------------------------------------
+        WHEN
+            update_bibs = TRUE
+            AND transfer_attached = TRUE
+            AND create_bibs = FALSE
+        THEN 'Cataloging Level 2'
+
+        -----------------------------------------------------------------
+        -- LEVEL 1
+        -----------------------------------------------------------------
+        WHEN
+            create_items = TRUE
+            AND update_items = TRUE
+            AND serials_checkin = TRUE
+            AND update_bibs = FALSE
+        THEN 'Cataloging Level 1'
+
+        ELSE 'Unclassified'
+
+    END AS cataloging_level,
+
+    -----------------------------------------------------------------
+    -- T/F DEBUGGING COLUMNS
+    -----------------------------------------------------------------
+
+    create_items,
+    update_items,
+    delete_items,
+
+    serials_checkin,
+    create_checkin,
+    update_checkin,
+    delete_checkin,
+    bind_serials,
+
+    create_bibs,
+    update_bibs,
+    delete_cataloged_bibs,
+    delete_uncataloged_bibs,
+    update_uncataloged,
+
+    transfer_attached
+
+FROM
+    permission_flags
+
+ORDER BY
+    name;
