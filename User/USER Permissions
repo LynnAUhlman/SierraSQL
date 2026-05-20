@@ -1,16 +1,12 @@
 ﻿-- replace iii_user.name equals string with the user login name [insert username here] and remove the brackets. 
 
-SELECT 
-  '   * ('||iii_user_permission_myuser.permission_num || ') '||iii_user_permission_myuser.permission_name
-FROM 
-  sierra_view.iii_user_permission_myuser, 
-  sierra_view.iii_user
-
-WHERE 
-  iii_user_permission_myuser.iii_user_id = iii_user.id
-AND 
-  iii_user.name = '[insert username here]'
-
-ORDER BY 
-name, 
-permission_num;
+SELECT
+  '   * (' || p.permission_num || ') ' || p.permission_name AS permission_detail
+FROM sierra_view.iii_user_permission_myuser AS p
+INNER JOIN sierra_view.iii_user AS u
+  ON p.iii_user_id = u.id
+WHERE
+  u.name = '[insert username here]'
+ORDER BY
+  u.name,
+  p.permission_num;
