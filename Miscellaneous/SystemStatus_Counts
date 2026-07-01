@@ -1,0 +1,21 @@
+SELECT 'BIBLIOGRAPHIC' AS record_type, COUNT(*) FROM sierra_view.bib_record
+UNION ALL
+SELECT 'ORDER', COUNT(*) FROM sierra_view.order_record
+UNION ALL
+SELECT 'HOLDING (CHECKIN)', COUNT(*) FROM sierra_view.holding_record
+UNION ALL
+SELECT 'AUTHORITY', COUNT(*) FROM sierra_view.authority_record
+UNION ALL
+SELECT 'ITEM', COUNT(*) FROM sierra_view.item_record
+UNION ALL
+SELECT 'PATRON', COUNT(*) FROM sierra_view.patron_record
+UNION ALL
+SELECT 'COURSE', COUNT(*) FROM sierra_view.course_record
+UNION ALL
+SELECT 'INVOICE', COUNT(*) FROM sierra_view.invoice_record
+UNION ALL
+SELECT 'VENDOR', COUNT(*) FROM sierra_view.vendor_record
+UNION ALL
+SELECT 'PROGRAM', COUNT(*) FROM sierra_view.program_record
+UNION ALL
+SELECT 'SECTION', COUNT(*) FROM sierra_view.section_record;
